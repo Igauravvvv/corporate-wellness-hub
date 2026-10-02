@@ -1,0 +1,31 @@
+"use client";
+import { WellnessLink as Link } from "../components/WellnessLink";
+import { ArrowDown, ArrowRight, ArrowUpRight, Check, Coffee, MessageCircle, MoveUpRight, Users } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useEffect, useState } from "react";
+import { GroupIcon } from "../components/GroupIcon";
+import { Mascot } from "../components/Mascot";
+import { Reveal } from "../components/WellnessMotion";
+import { useInternetIdentity } from "../hooks/useInternetIdentity";
+import { useLocalProfile } from "../hooks/useLocalProfile";
+const ways = [{ title: "Find your people", desc: "Your kind of conversations.", icon: Users, href: "/groups", color: "sage" }, { title: "Move a little", desc: "Get out of your head.", icon: MoveUpRight, href: "/book-activities", color: "peach" }, { title: "Let it out", desc: "A space to be yourself.", icon: MessageCircle, href: "/discuss", color: "lavender" }, { title: "Take a breather", desc: "Make room for a reset.", icon: Coffee, href: "/meetup-activities", color: "butter" }];
+const circles = [
+ { title: "Cricket", desc: "Find a team. Plan your next match.", slug: "cricket", color: "butter" },
+ { title: "Music", desc: "Share playlists and discover new sounds.", slug: "music", color: "lavender" },
+ { title: "Health & wellness", desc: "Build better habits together.", slug: "health-wellness", color: "sage" }
+];
+export function HomePage() {
+ const { identity } = useInternetIdentity();
+ const moodKey = `wellness-pulse:${identity?.getPrincipal().toText()}`;
+ const profile = useLocalProfile(); const [word, setWord] = useState(0); const [mood, setMood] = useState(""); const reduced = useReducedMotion();
+ useEffect(() => { if (reduced) return; const timer = setInterval(() => setWord(w => (w + 1) % 3), 3300); return () => clearInterval(timer); }, [reduced]);
+ useEffect(() => { setMood(""); try { const saved = JSON.parse(localStorage.getItem(moodKey) || "null"); if (saved?.date === new Date().toDateString()) setMood(saved.mood); } catch {} }, [moodKey]);
+ function checkIn(value: string) { setMood(value); try { localStorage.setItem(moodKey, JSON.stringify({ mood: value, date: new Date().toDateString() })); } catch {} }
+ return <div className="wellness-home"><section className="home-hero"><div className="hero-copy"><Reveal><h1>Less work mode.<br />More <span className="rotating-word"><AnimatePresence mode="wait"><motion.em key={word} initial={{ opacity: 0, y: 18, filter: "blur(5px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} exit={{ opacity: 0, y: -18, filter: "blur(5px)" }} transition={{ duration: reduced ? 0 : 0.4 }}>{["you mode.", "good energy.", "connection."][word]}</motion.em></AnimatePresence></span></h1><p>Step away from the to-do list. Find your people, try something new, and make a little room to feel good.</p><div className="hero-actions"><Link className="wellness-button" href="/groups">Find your kind of good <ArrowUpRight size={18} /></Link><a href="#your-pace" className="text-action">Take a look around <ArrowDown size={16} /></a></div></Reveal></div>
+ <div className="hero-art" aria-label="A collection of community portrait avatars"><span className="art-orbit orbit-one" /><span className="art-orbit orbit-two" /><div className="hero-character character-back"><Mascot variant={2} /></div><div className="hero-character character-left"><Mascot variant={1} /></div><div className="hero-character character-front"><Mascot variant={0} /></div></div></section>
+ 
+ <section id="your-pace" className="home-section"><Reveal className="section-heading"><div><h2>What sounds good right now?</h2></div><p>No big commitments.<br />Just a good place to start.</p></Reveal><div className="ways-grid">{ways.map((way, i) => <Reveal key={way.title} delay={i * 0.07}><Link href={way.href} className={`way-card ${way.color}`}><div className="way-top"><way.icon size={25} strokeWidth={1.5} /><ArrowUpRight size={19} /></div><h3>{way.title}</h3><p>{way.desc}</p></Link></Reveal>)}</div></section>
+ <section className="pulse-panel"><Reveal><h2>{profile ? `${profile.name}, how’s your day?` : "Hey you, how’s your day?"}</h2><p>No right answer. Just a little check-in.</p></Reveal><div className="pulse-options">{["Great", "Good", "Okay", "Low", "Overwhelmed"].map((label, i) => <button key={label} type="button" aria-pressed={mood === label} onClick={() => checkIn(label)} className={mood === label ? "selected" : ""}><Mascot variant={[0, 1, 4, 2, 5][i]} /><span>{label}{mood === label && <Check size={12} />}</span></button>)}<p className="pulse-response" role="status">{mood ? (mood === "Low" || mood === "Overwhelmed" ? "It’s okay to take it slow. You don’t have to do today alone." : "Thanks for checking in. Make a little room for yourself today.") : "Your check-in stays on this device."}</p></div></section>
+ <section className="home-section"><Reveal className="section-heading"><div><h2>Find your group.</h2></div><Link href="/groups" className="text-action">Explore all groups <ArrowUpRight size={18} /></Link></Reveal><div className="circles-grid">{circles.map((circle, i) => <Reveal key={circle.slug} delay={i * 0.1}><Link href={`/groups/${circle.slug}`} className="circle-card"><div className={`circle-art ${circle.color}`}><GroupIcon topic={circle.slug} label={`${circle.title} group icon`} /></div><div className="circle-copy"><div><h3>{circle.title}</h3><p>{circle.desc}</p></div><span className="round-arrow"><ArrowUpRight size={20} /></span></div></Link></Reveal>)}</div></section>
+ <Reveal className="home-manifesto"><h2>You’re a person.<br /><em>Not just a job title.</em></h2><p>A coffee. A conversation. A game with someone new.<br />Sometimes, the little things make the biggest difference.</p><Link href="/onboarding" className="wellness-button light">Make this space yours <ArrowRight size={18} /></Link><Mascot variant={3} /></Reveal></div>;
+}

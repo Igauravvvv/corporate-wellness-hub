@@ -1,0 +1,17 @@
+node_modules/
+.next*/
+dist/
+build/
+out/
+coverage/
+artifacts/
+.vercel/
+.dfx/
+.env*
+*.pem
+*.key
+*.log
+*.tsbuildinfo
+.DS_Store
+playwright-report/
+test-results/
