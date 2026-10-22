@@ -74,12 +74,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
               ))}
             </nav>
 
-            <Link href="/onboarding" className="sidebar-profile">
+            <Link href="/profile" className="sidebar-profile">
               <Mascot variant={profile?.avatar ?? 0} />
               <span>
-                <strong>{profile?.name || "Your space awaits"}</strong>
+                <strong>{profile?.name || "Smash Scorer"}</strong>
                 <small>
-                  {profile ? "Edit your profile" : "Create your profile"}
+                  {profile ? "View / Edit profile" : "Create your profile"}
                 </small>
               </span>
               <ArrowUpRight size={17} />
@@ -114,11 +114,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
                   {signingOut ? "Signing out…" : "Sign out"}
                 </button>
                 <Link
-                  href="/account"
+                  href="/profile"
                   className="topbar-account"
-                  title="Account settings"
+                  title="My Profile"
                 >
-                  {profile ? `Hey, ${profile.name}` : "Create an account"}
+                  {profile ? `Hey, ${profile.name}` : "Hey, Smash Scorer"}
                   <Mascot variant={profile?.avatar ?? 0} />
                 </Link>
               </div>

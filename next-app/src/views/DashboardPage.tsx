@@ -290,7 +290,7 @@ export function DashboardPage() {
                   <h1 className="text-3xl font-display font-bold text-foreground mb-1">
                     Welcome back,{" "}
                     <span className="text-primary">
-                      {profile?.name || "Wellness Member"}
+                      {profile?.name || "Smash Scorer"}
                     </span>{" "}
                     👋
                   </h1>

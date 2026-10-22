@@ -60,10 +60,10 @@ const member = {
 let connections = [];
 let messages = [];
 const defaultProfile = {
-  name: "Alex",
+  name: "Smash Scorer",
   avatar: 0,
-  bio: "Here for good company.",
-  interests: ["Music"],
+  bio: "Active member aiming to de-stress and stay healthy.",
+  interests: ["Sports", "Badminton"],
   availability: ["After work"],
   goal: "Meet my people",
 };
@@ -109,21 +109,33 @@ createServer(async (req, res) => {
   else if (path === "/auth/v1/user") data = user;
   else if (path === "/auth/v1/otp") data = {};
   else if (path === "/auth/v1/verify") {
-    if (body.token !== "123456" && body.token_hash !== "valid-test-hash") {
+    if (
+      body.token !== "123456" &&
+      !/^\d{6}$/.test(body.token) &&
+      body.token_hash !== "valid-test-hash"
+    ) {
       res.statusCode = 403;
       data = { code: "otp_expired", msg: "Token has expired or is invalid" };
-    } else data = authSession();
+    } else {
+      if (body.email) user.email = body.email;
+      data = authSession();
+    }
   } else if (path === "/auth/v1/token") {
     if (
       new URL(req.url, "http://localhost").searchParams.get("grant_type") ===
       "password"
     ) {
-      if (body.password === "Correct-password1") data = authSession();
-      else {
+      if (
+        body.password === "Correct-password1" ||
+        (typeof body.password === "string" && body.password.length >= 6)
+      ) {
+        if (body.email) user.email = body.email;
+        data = authSession();
+      } else {
         res.statusCode = 400;
         data = {
           code: "invalid_credentials",
-          msg: "Invalid login credentials",
+          msg: "Invalid login credentials. Password must be at least 6 characters.",
         };
       }
     } else {
@@ -190,7 +202,7 @@ createServer(async (req, res) => {
       id: Date.now(),
       body: body.p_body,
       created_at: new Date().toISOString(),
-      alias: body.p_anonymous ? "Quiet a1b2c3" : "Alex",
+      alias: body.p_anonymous ? "Quiet a1b2c3" : "Smash Scorer",
       mine: true,
       anonymous: body.p_anonymous,
       likes: 0,

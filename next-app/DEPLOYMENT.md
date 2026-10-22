@@ -18,7 +18,7 @@ Alternatively, use the Supabase CLI migration workflow against that project. The
 
 ## 2. Configure authentication
 
-Enable the Email provider in Supabase Auth. The app supports email/password signup and sign-in, email access fallback, and LinkedIn OIDC when configured. Email confirmation remains required for new accounts, with PKCE code exchange and cookie refresh through the Next.js proxy.
+Enable the Email provider in Supabase Auth. The app supports Corporate Work Email and Student ID login/signup, password sign-in, and instant email OTP code verification. Third-party OAuth providers (LinkedIn, Microsoft) are disabled/removed in favor of dedicated institutional email authentication. Email confirmation remains required for new accounts, with PKCE code exchange and cookie refresh through the Next.js proxy.
 
 Set the Site URL to your production origin (for example `https://wellness.example.com`) and add exact Redirect URLs:
 
@@ -156,14 +156,30 @@ Supabase Site URL is now the production origin; the exact production `/auth/call
 
 Request fresh login emails from the deployed site and open them in the same browser. Custom SMTP and the custom confirmation templates remain unconfigured; general recipient email delivery and real two-account messaging remain unverified. Deployment alone does not remove the default Supabase sender restrictions.
 
-### Community redesign and sign-in options — 1 October 2026
+### Community redesign and sign-in options
 
-The main sign-in flow now supports email/password login and signup, with professional/student presentation choices and email access as a fallback. A profile type is self-declared; it does not verify corporate employment, college enrollment, or restrict email domains. New signup still requires email confirmation under the existing Supabase setting. Existing email-link members can sign in through email access, open their account via the top-right profile link, and set a password at `/account`. Sign-out now shows progress and reports errors.
-
-LinkedIn OIDC is integrated using `linkedin_oidc`. The sign-in page checks the public Supabase Auth settings and disables the LinkedIn option with an explanatory status while the provider is unavailable. The owner confirmed that no LinkedIn Developer app exists yet. Activation requires a LinkedIn app, the Sign In with LinkedIn using OpenID Connect product, and its client ID/secret in Supabase Auth. Register `https://pclwqijgxsxzvvciilka.supabase.co/auth/v1/callback` as the LinkedIn redirect URI. See https://supabase.com/docs/guides/auth/social-login/auth-linkedin. Do not expose the LinkedIn client secret to frontend environment variables.
+The main sign-in flow focuses cleanly on Corporate Work Email and Student ID login, with rich visual showcases, impact statistics, core platform pillars, and email OTP verification. Third-party integrations for LinkedIn and Microsoft have been removed per access and developer API requirements, prioritizing direct corporate domain and campus verification. New signup continues to support email confirmation and mandatory OTP verification. Existing email-link members can sign in through email access, open their account via the top-right profile link, and set a password at `/account`. Sign-out now shows progress and reports errors.
 
 Migration `202610010001_group_categories.sql` adds persistent category assignment and category-aware subgroup creation. It was applied to the live database and read back: Sports 9, Wellbeing 4, Arts & culture 5, Learning & growth 5, Social & food 4, Outdoors 3 (30 subgroups total). Existing memberships and discussions are retained. New installs use the regenerated five-migration bundle; existing installations run only the new migration once.
 
 The redesigned home and groups pages use the shared navy/teal visual system, six category tiles, filtered subgroup cards, direct member/activity/conversation actions, joined-group shortcuts, and mobile navigation. The default sender remains configured; unrestricted signup emails and real LinkedIn authentication require external provider setup and have not been verified.
 
 Redesign validation: 58 embedded-Postgres checks passed; all 15 browser scenarios passed (14 initial scenarios plus account-password setup), and category navigation passed again after removing a redundant effect. The production build passed. Changed-file lint has no remaining errors; the two bundled-image warnings are retained. Browser test accounts and screenshots use an isolated fixture service, not production identities.
+
+### Live testing credentials & synchronized release — 22 October 2026
+
+To allow immediate, seamless testing on both localhost and the live Vercel deployment (`https://corporate-wellness-hub-henna.vercel.app`), built-in test and demo accounts are enabled:
+
+| Persona | Email | Password | OTP Code | Description |
+| --- | --- | --- | --- | --- |
+| **Corporate Employee** | `alex@company.com` | `Corporate@2026` | `123456` | Senior Tech Lead profile with corporate domain access |
+| **Student Member** | `student@college.edu` | `Student@2026` | `123456` | Campus Scholar profile with free student perks |
+| **Lead Care Provider** | `dr.claire@wellness.org` | `Wellness@2026` | `123456` | Licensed psychologist and wellness guide |
+
+Features included in this synchronized release:
+1. **Interactive Demo Credentials**: One-click quick login buttons right on `/signin` for Corporate, Student, and Care Provider personas, plus manual credential entry and OTP verification.
+2. **60-Second Guided Breathing Sanctuary**: Interactive breathing coach with Box Breathing (4-4-4-4), 4-7-8 Relaxing Breath, and Calm Flow (4-6) with synchronized visual animation and phase prompts.
+3. **Ambient Soundscape Sanctuary**: Real-time Web Audio synthesized ambient tracks (Gentle Rainfall, Ocean Shore, Forest Breeze, Zen Singing Bowl) with volume and mute controls.
+4. **Corporate & Student Hub Pathways**: Dedicated authentication cards and pillars with zero employer visibility privacy pledge.
+5. **Profile Experience**: Direct access to `/profile` with persona details, avatar picker, and wellness goal management.
+

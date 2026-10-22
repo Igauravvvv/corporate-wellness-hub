@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
+import { StressBanner } from "@/components/StressBanner";
 import { DailyCheckIn } from "@/components/DailyCheckIn";
+import { MindfulResetSanctuary } from "@/components/MindfulResetSanctuary";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -14,6 +16,7 @@ import { useLocalProfile } from "@/hooks/useLocalProfile";
 import { useGroups } from "@/hooks/useCommunity";
 import { useInternetIdentity } from "@/hooks/useInternetIdentity";
 import { groupCategories, getCategory } from "@/lib/groupCategories";
+
 export function HomePage() {
   const profile = useLocalProfile();
   const groups = useGroups();
@@ -22,14 +25,20 @@ export function HomePage() {
     groups.data?.filter((g) =>
       g.group_members.some((m) => m.user_id === user?.id),
     ) ?? [];
+
   return (
     <div className="member-home">
+      {/* Top Global Stress Statistics & Reality */}
+      <div className="mb-6 -mx-4 sm:mx-0 rounded-2xl overflow-hidden border border-border/60 shadow-sm" data-ocid="home.stress_banner">
+        <StressBanner />
+      </div>
+
       <header className="member-greeting">
         <div>
           <span className="eyebrow">YOUR DAILY DOSE OF CONNECTION</span>
           <h1>
             Good to see you
-            {profile?.name ? `, ${profile.name.split(" ")[0]}` : ""}.
+            {profile?.name ? `, ${profile.name}` : ", Smash Scorer"}.
           </h1>
           <p>Make a little time for the things—and people—you enjoy.</p>
         </div>
@@ -57,8 +66,8 @@ export function HomePage() {
         </div>
         <div className="member-hero-image">
           <img
-            src="/images/community-hero.webp"
-            alt="Friends taking a break together outdoors"
+            src="/images/corporate-wellness.jpg"
+            alt="Colleagues and friends taking a mindful wellness break together outdoors"
             width="1000"
             height="560"
           />
@@ -67,6 +76,7 @@ export function HomePage() {
           </span>
         </div>
       </section>
+
       <div className="quick-actions">
         <Link href="/people">
           <span className="mint">
@@ -99,6 +109,10 @@ export function HomePage() {
           <ArrowUpRight size={18} />
         </Link>
       </div>
+
+      {/* Interactive 60-Second Breathing Reset & Ambient Soundscape Sanctuary */}
+      <MindfulResetSanctuary />
+
       <section className="home-interests">
         <div className="section-title">
           <div>

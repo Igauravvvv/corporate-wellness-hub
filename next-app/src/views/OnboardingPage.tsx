@@ -90,6 +90,7 @@ function ProfileBuilder({ existing }: { existing: LocalProfile | null }) {
         identity?.getPrincipal().toText() || "",
       );
       await qc.invalidateQueries({ queryKey: ["profile"] });
+      await qc.invalidateQueries({ queryKey: ["user-profile"] });
       setDone(true);
     } catch (e) {
       setError(
@@ -173,7 +174,7 @@ function ProfileBuilder({ existing }: { existing: LocalProfile | null }) {
                         onChange={(e) =>
                           setProfile({ ...profile, name: e.target.value })
                         }
-                        placeholder="e.g. Alex, or your alter ego"
+                        placeholder="e.g. Smash Scorer, or your name"
                         aria-invalid={!!error}
                         aria-describedby={error ? "profile-error" : undefined}
                       />

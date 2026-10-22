@@ -1,6 +1,7 @@
 import { test, expect, type BrowserContext } from "@playwright/test";
 import { mkdir } from "node:fs/promises";
-test.beforeEach(async ({ request }) => {
+test.beforeEach(async ({ request, context }) => {
+  await context.clearCookies();
   await request.post("http://127.0.0.1:54329/test/reset");
 });
 async function signIn(context: BrowserContext) {
@@ -271,15 +272,15 @@ test("password sign in, invalid credentials, and sign out", async ({
   await page.goto("/people");
   await expect(page).toHaveURL(/signin/);
 });
-test("student signup requires verification and LinkedIn is unavailable honestly", async ({
+test("student signup requires verification with corporate and student id options", async ({
   page,
 }) => {
   await page.goto("/signin");
   await page.getByRole("button", { name: "Student", exact: true }).click();
   await expect(page.getByPlaceholder("you@college.edu")).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Continue with LinkedIn" }),
-  ).toBeDisabled();
+    page.getByRole("button", { name: /LinkedIn/i }),
+  ).toHaveCount(0);
   await page
     .getByRole("button", { name: "Create an account", exact: true })
     .click();
@@ -359,8 +360,8 @@ test("redesigned sign-in screenshots", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/signin");
   await expect(
-    page.getByRole("button", { name: "Continue with LinkedIn" }),
-  ).toBeDisabled();
+    page.getByRole("button", { name: /LinkedIn/i }),
+  ).toHaveCount(0);
   await page.screenshot({
     path: "artifacts/redesign-signin-desktop.png",
     fullPage: true,
@@ -404,3 +405,56 @@ test("existing email-link member can set a password in account settings", async 
     "",
   );
 });
+
+test("home page renders stress statistics banner and Smash Scorer persona, profile page works", async ({
+  page,
+  context,
+}) => {
+  await signIn(context);
+  await page.goto("/");
+  // Home page loads directly
+  await expect(page).toHaveURL("http://localhost:3101/");
+  // Greeting welcomes Smash Scorer, not Alex
+  await expect(page.getByRole("heading", { name: /Smash Scorer/ })).toBeVisible();
+  // Stress banner is visible at the top of the home page with stress metrics
+  const banner = page.locator('[data-ocid="home.stress_banner"]');
+  await expect(banner).toBeVisible();
+  await expect(banner).toContainText("The Stress Reality");
+  await expect(banner).toContainText("Global Awareness Series");
+  await expect(banner).toContainText("What Is Stress?");
+
+  // Profile navigation and page functionality
+  await page.goto("/profile");
+  await expect(page.getByRole("heading", { name: /Welcome, Smash Scorer/ })).toBeVisible();
+  await expect(page.getByLabel("Display Name")).toHaveValue("Smash Scorer");
+  await expect(page.getByText("Assigned Persona", { exact: true })).toBeVisible();
+});
+
+test("interactive 60-second breathing reset and ambient soundscapes on home page", async ({
+  page,
+  context,
+}) => {
+  await signIn(context);
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: /60-Second Reset & Ambient Sanctuary/ }),
+  ).toBeVisible();
+
+  // Test ambient sounds tab
+  await page.getByRole("button", { name: /Ambient Sounds/ }).click();
+  await expect(page.getByText("Gentle Rain")).toBeVisible();
+  await expect(page.getByText("Ocean Waves")).toBeVisible();
+  await expect(page.getByText("Zen Singing Bowl")).toBeVisible();
+
+  // Switch back to breathing and start breathwork
+  await page.getByRole("button", { name: /Guided Breathing/ }).click();
+  await expect(page.getByText("Box Breathing")).toBeVisible();
+  await page.getByRole("button", { name: /Begin 60s Breathwork/ }).click();
+  await expect(page.getByRole("button", { name: /Pause & Reset/ })).toBeVisible();
+  await page.getByRole("button", { name: /Pause & Reset/ }).click();
+  await expect(
+    page.getByRole("button", { name: /Begin 60s Breathwork/ }),
+  ).toBeVisible();
+});
+
+

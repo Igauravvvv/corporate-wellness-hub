@@ -252,6 +252,16 @@ export function Navbar() {
                   <DropdownMenuContent align="end" className="w-48">
                     <DropdownMenuItem asChild>
                       <Link
+                        href="/profile"
+                        className="flex items-center gap-2"
+                        data-ocid="nav.profile_link"
+                      >
+                        <User className="w-4 h-4 text-primary" />
+                        My Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link
                         href="/dashboard"
                         className="flex items-center gap-2"
                         data-ocid="nav.dashboard_link"
@@ -431,6 +441,15 @@ export function Navbar() {
                 </Link>
                 {isAuthenticated && (
                   <>
+                    <Link
+                      href="/profile"
+                      data-ocid="nav.profile_mobile_link"
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <User className="w-4 h-4 text-primary" />
+                      My Profile
+                    </Link>
                     <Link
                       href="/dashboard"
                       data-ocid="nav.dashboard_link"
