@@ -3,6 +3,7 @@ import Link from "next/link";
 import { StressBanner } from "@/components/StressBanner";
 import { DailyCheckIn } from "@/components/DailyCheckIn";
 import { MindfulResetSanctuary } from "@/components/MindfulResetSanctuary";
+import { ErgonomicDeskStretch } from "@/components/ErgonomicDeskStretch";
 import {
   ArrowUpRight,
   ArrowRight,
@@ -112,6 +113,9 @@ export function HomePage() {
 
       {/* Interactive 60-Second Breathing Reset & Ambient Soundscape Sanctuary */}
       <MindfulResetSanctuary />
+
+      {/* 2-Minute Ergonomic Desk Stretch & Micro-Break Timer */}
+      <ErgonomicDeskStretch />
 
       <section className="home-interests">
         <div className="section-title">

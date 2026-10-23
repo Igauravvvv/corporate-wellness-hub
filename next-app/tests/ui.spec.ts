@@ -457,4 +457,42 @@ test("interactive 60-second breathing reset and ambient soundscapes on home page
   ).toBeVisible();
 });
 
+test("interactive 2-minute ergonomic desk stretch and micro-break station on home page", async ({
+  page,
+  context,
+}) => {
+  await signIn(context);
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { name: "Relieve Desk Stiffness & Screen Fatigue" }),
+  ).toBeVisible();
+
+  // Test preset switching
+  await page.getByRole("button", { name: /Quick Posture \(60s\)/ }).click();
+  await expect(page.getByText("STEP 1 OF 2")).toBeVisible();
+  await page.getByRole("button", { name: /Screen Fatigue \(45s\)/ }).click();
+  await expect(page.getByText("STEP 1 OF 2")).toBeVisible();
+  await page.getByRole("button", { name: /Full 2-Min Reset/ }).click();
+  await expect(page.getByText("STEP 1 OF 5")).toBeVisible();
+
+  // Test stretch start and pause
+  await page.getByRole("button", { name: "Start Stretch" }).click();
+  await expect(page.getByRole("button", { name: "Pause Stretch" })).toBeVisible();
+  await page.getByRole("button", { name: "Pause Stretch" }).click();
+  await expect(page.getByRole("button", { name: "Resume Stretch" })).toBeVisible();
+
+  // Test next step button
+  await page.getByRole("button", { name: "Next stretch" }).click();
+  await expect(page.getByText("STEP 2 OF 5")).toBeVisible();
+
+  // Test sound toggle
+  await page.getByRole("button", { name: /Sound On/ }).click();
+  await expect(page.getByRole("button", { name: /Muted/ })).toBeVisible();
+
+  // Mobile overflow verification
+  await page.setViewportSize({ width: 390, height: 844 });
+  await noOverflow(page);
+});
+
+
 
