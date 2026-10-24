@@ -298,7 +298,7 @@ export function StressBanner() {
 
   return (
     <section
-      className="relative bg-zinc-950 overflow-hidden"
+      className="relative bg-zinc-950 overflow-hidden stress-banner-root"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       data-ocid="stress_banner.section"
@@ -313,40 +313,47 @@ export function StressBanner() {
       />
 
       {/* Section Header */}
-      <div className="relative container max-w-6xl mx-auto px-4 pt-14 pb-4 text-center">
+      <div className="relative container max-w-6xl mx-auto px-4 pt-10 sm:pt-14 pb-4 text-center">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <span className="inline-block text-xs font-semibold tracking-[0.2em] uppercase text-rose-400 mb-3">
+          <span className="inline-block text-xs font-semibold tracking-[0.2em] uppercase text-rose-400 mb-2 sm:mb-3">
             🌍 Global Awareness Series
           </span>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-white mb-2 tracking-tight">
+          <h2
+            className="font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 tracking-tight"
+            style={{ color: "#ffffff" }}
+          >
             The Stress Reality
           </h2>
-          <p className="text-zinc-400 text-sm md:text-base max-w-xl mx-auto">
+          <p
+            className="text-zinc-300 text-sm md:text-base max-w-xl mx-auto"
+            style={{ color: "#d4d4d8" }}
+          >
             Why corporate wellness isn&apos;t optional anymore — worldwide
           </p>
         </motion.div>
       </div>
 
       {/* Slider area */}
-      <div className="relative container max-w-6xl mx-auto px-4 pb-6">
-        <div className="relative flex items-center gap-2 md:gap-4">
-          {/* Prev button */}
+      <div className="relative container max-w-6xl mx-auto px-3 sm:px-4 pb-6">
+        <div className="relative flex items-center md:gap-4">
+          {/* Desktop Prev button */}
           <button
             type="button"
             onClick={prev}
             data-ocid="stress_banner.pagination_prev"
-            className="flex-shrink-0 w-9 h-9 md:w-11 md:h-11 rounded-full border border-white/10 bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-colors z-10"
+            className="hidden md:flex flex-shrink-0 w-11 h-11 rounded-full border border-white/10 bg-white/5 hover:bg-white/15 text-white items-center justify-center transition-colors z-10"
+            aria-label="Previous slide"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
 
-          {/* Slide container */}
-          <div className="flex-1 overflow-hidden rounded-2xl border border-white/[0.08] bg-zinc-900/60 min-h-[340px] md:min-h-[300px] relative">
+          {/* Slide container - full width on mobile, no side squeezing */}
+          <div className="w-full flex-1 overflow-hidden rounded-2xl border border-white/[0.12] bg-zinc-900/80 shadow-2xl min-h-[420px] sm:min-h-[360px] md:min-h-[300px] relative flex flex-col justify-center">
             <AnimatePresence custom={direction} mode="wait">
               <motion.div
                 key={current}
@@ -356,43 +363,68 @@ export function StressBanner() {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.38, ease: "easeInOut" }}
-                className="p-6 md:p-10"
+                className="p-5 sm:p-7 md:p-10 w-full"
               >
                 <SlideContent slide={slides[current]} />
               </motion.div>
             </AnimatePresence>
           </div>
 
-          {/* Next button */}
+          {/* Desktop Next button */}
           <button
             type="button"
             onClick={next}
             data-ocid="stress_banner.pagination_next"
-            className="flex-shrink-0 w-9 h-9 md:w-11 md:h-11 rounded-full border border-white/10 bg-white/5 hover:bg-white/15 text-white flex items-center justify-center transition-colors z-10"
+            className="hidden md:flex flex-shrink-0 w-11 h-11 rounded-full border border-white/10 bg-white/5 hover:bg-white/15 text-white items-center justify-center transition-colors z-10"
+            aria-label="Next slide"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Dot indicators */}
+        {/* Navigation & Dot indicators */}
         <div
-          className="flex items-center justify-center gap-2 mt-5"
+          className="flex items-center justify-between sm:justify-center gap-3 mt-5 px-1 sm:px-0"
           data-ocid="stress_banner.tab"
         >
-          {slides.map((s, i) => (
-            <button
-              type="button"
-              key={s.id}
-              onClick={() => goTo(i, i > current ? 1 : -1)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === current
-                  ? i === slides.length - 1
-                    ? "w-8 bg-emerald-500"
-                    : "w-8 bg-rose-500"
-                  : "w-2 bg-white/20 hover:bg-white/40"
-              }`}
-            />
-          ))}
+          {/* Mobile Prev button */}
+          <button
+            type="button"
+            onClick={prev}
+            className="md:hidden flex w-9 h-9 rounded-full border border-white/15 bg-white/10 hover:bg-white/20 active:scale-95 text-white items-center justify-center transition-all"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          {/* Dot indicators */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {slides.map((s, i) => (
+              <button
+                type="button"
+                key={s.id}
+                onClick={() => goTo(i, i > current ? 1 : -1)}
+                aria-label={`Go to slide ${i + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === current
+                    ? i === slides.length - 1
+                      ? "w-8 bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]"
+                      : "w-8 bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]"
+                    : "w-2 bg-white/25 hover:bg-white/50"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Mobile Next button */}
+          <button
+            type="button"
+            onClick={next}
+            className="md:hidden flex w-9 h-9 rounded-full border border-white/15 bg-white/10 hover:bg-white/20 active:scale-95 text-white items-center justify-center transition-all"
+            aria-label="Next slide"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
       </div>
 
@@ -413,7 +445,7 @@ function SlideContent({ slide }: { slide: (typeof slides)[number] }) {
   const isSolution = slide.type === "solutions";
 
   const header = (
-    <div className="flex items-start gap-3 mb-6">
+    <div className="flex items-start gap-3 mb-5 sm:mb-6">
       <div
         className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${
           isSolution
@@ -428,14 +460,19 @@ function SlideContent({ slide }: { slide: (typeof slides)[number] }) {
         />
       </div>
       <div>
-        <p className="text-xs font-medium text-zinc-500 uppercase tracking-widest mb-0.5">
+        <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest mb-0.5">
           {String(slide.id).padStart(2, "0")} /{" "}
           {String(slides.length).padStart(2, "0")}
         </p>
-        <h3 className="font-display text-xl md:text-2xl font-bold text-white leading-tight">
+        <h3
+          className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight"
+          style={{ color: "#ffffff" }}
+        >
           {slide.title}
         </h3>
-        <p className="text-zinc-400 text-sm mt-0.5">{slide.subtitle}</p>
+        <p className="text-zinc-300 text-xs sm:text-sm mt-0.5" style={{ color: "#d4d4d8" }}>
+          {slide.subtitle}
+        </p>
       </div>
     </div>
   );
@@ -444,14 +481,17 @@ function SlideContent({ slide }: { slide: (typeof slides)[number] }) {
     return (
       <div>
         {header}
-        <p className="text-zinc-300 text-sm md:text-base leading-relaxed mb-5">
+        <p
+          className="text-zinc-200 text-sm sm:text-base leading-relaxed mb-5"
+          style={{ color: "#e4e4e7" }}
+        >
           {slide.body}
         </p>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 pt-1">
           {slide.pills.map((p) => (
             <span
               key={p}
-              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-rose-500/15 border border-rose-500/30 text-rose-300"
+              className="text-xs font-semibold px-3 py-1.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-200"
             >
               {p}
             </span>
@@ -474,10 +514,10 @@ function SlideContent({ slide }: { slide: (typeof slides)[number] }) {
               <div className="font-display text-3xl md:text-4xl font-bold text-rose-400 mb-1">
                 {s.value}
               </div>
-              <div className="text-zinc-300 text-sm leading-snug mb-2">
+              <div className="text-zinc-200 text-sm leading-snug mb-2" style={{ color: "#e4e4e7" }}>
                 {s.label}
               </div>
-              <div className="text-zinc-600 text-xs">{s.source}</div>
+              <div className="text-zinc-500 text-xs" style={{ color: "#71717a" }}>{s.source}</div>
             </div>
           ))}
         </div>
@@ -496,14 +536,15 @@ function SlideContent({ slide }: { slide: (typeof slides)[number] }) {
               className="bg-white/[0.04] rounded-xl p-4 border border-white/[0.08]"
             >
               <div className="text-2xl mb-2">{col.emoji}</div>
-              <div className="font-semibold text-white mb-2 text-sm">
+              <div className="font-semibold text-white mb-2 text-sm" style={{ color: "#ffffff" }}>
                 {col.heading}
               </div>
               <ul className="space-y-1">
                 {col.items.map((item) => (
                   <li
                     key={item}
-                    className="text-xs text-zinc-400 flex items-start gap-1.5"
+                    className="text-xs text-zinc-300 flex items-start gap-1.5"
+                    style={{ color: "#d4d4d8" }}
                   >
                     <span className="mt-1 w-1 h-1 rounded-full bg-rose-500 flex-shrink-0" />
                     {item}

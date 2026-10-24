@@ -2433,3 +2433,17 @@
   }
 }
 
+/* Stress Reality Banner High-Contrast Styles */
+.wellness-shell .stress-banner-root h1,
+.wellness-shell .stress-banner-root h2,
+.wellness-shell .stress-banner-root h3,
+.wellness-shell .stress-banner-root h4 {
+  color: #ffffff !important;
+  font-family: inherit;
+}
+
+.wellness-shell .stress-banner-root p {
+  color: inherit;
+}
+
+
